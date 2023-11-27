@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../index.js">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap">
+    <link rel="stylesheet" href="/style.css">
+    <title>CPF</title>
+</head>
+<body>
+    <div class="container">
+        <section class="add-item">
+            <h2>Descobre os Dois Dígitos do CPF</h2>
+            <form id="addItemForm" class="item-form">
+                <label for="cpf" class="form-label">CPF:</label>
+                <input type="text" id="cpf" class="form-input" placeholder="Digite o seu CPF" required>
+
+                <button type="submit" class="form-button">Adicionar</button>
+            </form>
+        </section>
+
+        <section class="item-list">
+            <h2>Resultado</h2>
+            <ul id="items" class="list"></ul>
+        </section>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script> function calcularDigitosCPF(cpf) {
+        // Os primeiros 9 dígitos do CPF são convertidos para um array
+        const cpfArray = cpf.split('').map(Number);
+
+        // Calculo do primeiro dígito verificador
+        let soma = 0;
+        for (let i = 0; i < 9; i++) {
+            soma += cpfArray[i] * (10 - i);
+        }
+        let digito1 = (11 - (soma % 11));
+
+        // Calculo do segundo dígito verificador
+        soma = 0;
+        for (let i = 0; i < 9; i++) {
+            soma += cpfArray[i] * (11 - i);
+            console.log(11 - i)
+            console.log(soma)
+        }
+        soma += digito1 * 2;
+        console.log("total")
+        console.log(soma)
+        let digito2 = (11 - (soma % 11 ));
+
+        // Retorna o CPF completo com os dígitos verificadores
+        return cpf + digito1 + digito2;
+    }
+
+    $(document).ready(function () {
+        $('#addItemForm').on('submit', function (e) {
+            e.preventDefault();
+
+            var cpf = $('#cpf').val();
+
+            if (cpf.length !== 9 || !/^\d+$/.test(cpf)) {
+                alert('Por favor, insira os 9 primeiros dígitos do CPF.');
+                return;
+            }
+
+            var cpfCompleto = calcularDigitosCPF(cpf);
+
+            var newItem = `
+                <li class="list-item">
+                    <div class="item-details">
+                        <div>
+                            <strong>${cpfCompleto}</strong><br>
+                        </div>
+                    </div>
+                    <button class="delete">Remover</button>
+                </li>
+            `;
+
+            $('#items').append(newItem);
+
+            // Limpar os campos do formulário
+            $('#cpf').val('');
+        });
+
+        $('#items').on('click', '.delete', function () {
+            $(this).parent().remove();
+        });
+    });
+    </script>
+</body>
+</html>
